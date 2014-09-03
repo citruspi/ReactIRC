@@ -22,7 +22,7 @@ class Bot(object):
     def monitor(self, **kwargs):
 
         config = {
-            'username': kwargs['username'],
+            'nick': kwargs['nick'],
             'port': kwargs['port'],
             'server': kwargs['server'],
             'channel': kwargs['channel']
@@ -31,8 +31,8 @@ class Bot(object):
         self.socket = socket.socket()
 
         self.socket.connect((config['server'], config['port']))
-        self.socket.send('NICK %s\r\n' % config['username'])
-        self.socket.send('USER %s %s %s :%s\r\n' % (config['username'], config['username'], config['username'], config['username']))
+        self.socket.send('NICK %s\r\n' % config['nick'])
+        self.socket.send('USER %s %s %s :%s\r\n' % (config['nick'], config['nick'], config['nick'], config['nick']))
         self.socket.send('JOIN #%s\r\n' % config['channel'])
 
         while True:
@@ -56,7 +56,7 @@ class Bot(object):
                     'message': parsed[3][1:]
                 }
 
-                if context['target'] == config['username']:
+                if context['target'] == config['nick']:
 
                     context['target'] = context['sender'].split('!')[0]
 
