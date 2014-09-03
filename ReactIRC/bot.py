@@ -20,25 +20,25 @@ class Bot(object):
 
         for channel in config['channels']:
 
-            self.__join(channel)
+            self.join(channel)
 
     def __send(self, message):
 
         self.socket.send(message)
 
-    def __join(self, channel):
-
-        self.__send('JOIN #%s\r\n' % channel)
-
-    def __speak(self, target, message):
+    def speak(self, target, message):
 
         self.__send("PRIVMSG %s :%s\r\n" % (target, message))
 
-    def __part(self, channel):
+    def join(self, channel):
+
+        self.__send('JOIN #%s\r\n' % channel)
+
+    def part(self, channel):
 
         self.__send('PART #%s\r\n' % channel)
 
-    def __quit(self):
+    def quit(self):
 
         self.__send('QUIT\r\n')
 
@@ -113,4 +113,4 @@ class Bot(object):
 
                         if response is not None:
 
-                            self.__speak(context['target'], response)
+                            self.speak(context['target'], response)
