@@ -22,11 +22,12 @@ class Bot(object):
     def monitor(self, **kwargs):
 
         config = {
-            'nick': kwargs['nick'],
-            'port': kwargs['port'],
-            'server': kwargs['server'],
-            'channel': kwargs['channel']
+            'port': 6667,
+            'server': 'chat.freenode.com',
         }
+
+        config['nick'] = kwargs['nick']
+        config['channel'] = kwargs['channel']
 
         self.socket = socket.socket()
 
