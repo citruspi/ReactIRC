@@ -64,7 +64,7 @@ class Bot(object):
 
         self.__send('QUIT\r\n')
 
-    def add_hook(self, rule, search, function):
+    def add_hook(self, rule, function, search=False):
 
         """Allow for the addition of existing functions without using the
         decorator pattern"""
