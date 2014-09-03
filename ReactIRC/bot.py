@@ -15,14 +15,17 @@ class Bot(object):
 
         self.socket = socket.socket()
 
+        # If the port is used for SSL, wrap the socket in SSL/TLS
         if config['port'] in [6697, 7000, 7070]:
 
             self.socket = ssl.wrap_socket(self.socket)
 
+        # Initiate a connection to the server and setup the user/nick
         self.socket.connect((config['server'], config['port']))
         self.__send('NICK %s\r\n' % config['nick'])
         self.__send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' % {'n':config['nick']})
 
+        # Join each of the specified channels
         for channel in config['channels']:
 
             self.join(channel)
@@ -64,6 +67,8 @@ class Bot(object):
 
         def decorator(function):
 
+            # Add the function and the regular expression to the list of
+            # functions and expressions to check
             self.hooks.append({
                 'rule': re.compile(rule),
                 'function': function
@@ -81,41 +86,53 @@ class Bot(object):
         If so, call the function with the context and the result of the
         matching."""
 
+        # Set defaults for the IRC port and server
         config = {
             'port': 6667,
             'server': 'chat.freenode.com',
         }
 
+        # Set the nick and channels
         config['nick'] = kwargs['nick']
         config['channels'] = kwargs['channels'].split(',')
 
+        # Determine if the port or server was overridden
         for key in ['port', 'server']:
 
             if key in kwargs.keys():
 
                 config[key] = kwargs[key]
 
+        # Setup the connection
         self.__setup(config)
 
+        # Listen for data forever
         while True:
 
+            # Read in some data
             content = self.socket.recv(4096)
 
+            # If it's a timeout PING...
             if content[0:4] == "PING":
 
+                #... respond with a PONG
                 self.__send('PONG %s \r\n' % content.split()[1])
                 continue
 
+            # Otherwise, break up the data by line
             for line in content.split('\n'):
 
+                # Strip any unnecessary characters off the ends
                 line = str(line).strip()
 
+                # Break up the line
                 parsed = line.split(None, 3)
 
                 if len(parsed) != 4:
 
                     continue
 
+                # Parse out the sender, type, target, and message body
                 context = {
                     'sender': parsed[0][1:].split('!')[0],
                     'type': parsed[1],
@@ -123,18 +140,25 @@ class Bot(object):
                     'message': parsed[3][1:]
                 }
 
+                # If it's a private message, set the target to the sender
                 if context['target'] == config['nick']:
 
                     context['target'] = context['sender'].split('!')[0]
 
+                # Iterate over the functions with an .on() decorator
                 for hook in self.hooks:
 
+                    # Check if the rule matches the message body
                     match = hook['rule'].match(context['message'])
 
                     if match:
 
+                        # Call the function with the context and result of the
+                        # match and capture the returned value
                         response = hook['function'](context, match.groups())
 
+                        # If the function actually returned something print it
+                        # to the IRC channel
                         if response is not None:
 
                             self.speak(context['target'], response)
