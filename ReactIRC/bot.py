@@ -14,6 +14,9 @@ class Bot(object):
         SSL. It then connects to the server, sets up the nick and user
         information, and then joins any specified channels."""
 
+        self.verbose = config['verbose']
+        self.debug= config['debug']
+
         self.socket = socket.socket()
 
         # If the port is used for SSL, wrap the socket in SSL/TLS
@@ -91,7 +94,9 @@ class Bot(object):
         # Set defaults for the IRC port and server
         config = {
             'port': 6667,
-            'server': 'chat.freenode.com',
+            'server': 'chat.freenode.com',\
+            'debug': False,
+            'verbose': False
         }
 
         # Set the nick and channels
@@ -99,7 +104,7 @@ class Bot(object):
         config['channels'] = kwargs['channels'].split(',')
 
         # Determine if the port or server was overridden
-        for key in ['port', 'server']:
+        for key in ['port', 'server', 'debug', 'verbose']:
 
             if key in kwargs.keys():
 
@@ -126,6 +131,10 @@ class Bot(object):
 
                 # Strip any unnecessary characters off the ends
                 line = str(line).strip()
+
+                if self.verbose:
+
+                    print line
 
                 # Break up the line
                 parsed = line.split(None, 3)
@@ -160,6 +169,12 @@ class Bot(object):
                         match = hook['rule'].match(self.context['message'])
 
                     if match:
+
+                        if self.debug:
+
+                            print '---'
+                            print self.context
+                            print match.groups()
 
                         # Call the function with capture groups as parameters
                         response = hook['function'](*match.groups())
