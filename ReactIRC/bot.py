@@ -34,6 +34,14 @@ class Bot(object):
 
         self.__send("PRIVMSG %s :%s\r\n" % (target, message))
 
+    def __part(self, channel):
+
+        self.__send('PART #%s\r\n' % channel)
+
+    def __quit(self):
+
+        self.__send('QUIT\r\n')
+
     def on(self, rule):
 
         def decorator(function):
