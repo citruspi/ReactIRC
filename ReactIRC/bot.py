@@ -19,6 +19,10 @@ class Bot(object):
 
         return decorator
 
+    def __send(self, message):
+
+        self.socket.send(message)
+
     def monitor(self, **kwargs):
 
         config = {
@@ -38,9 +42,9 @@ class Bot(object):
         self.socket = socket.socket()
 
         self.socket.connect((config['server'], config['port']))
-        self.socket.send('NICK %s\r\n' % config['nick'])
-        self.socket.send('USER %s %s %s :%s\r\n' % (config['nick'], config['nick'], config['nick'], config['nick']))
-        self.socket.send('JOIN #%s\r\n' % config['channel'])
+        self.__send('NICK %s\r\n' % config['nick'])
+        self.__send('USER %s %s %s :%s\r\n' % (config['nick'], config['nick'], config['nick'], config['nick']))
+        self.__send('JOIN #%s\r\n' % config['channel'])
 
         while True:
 
@@ -48,7 +52,7 @@ class Bot(object):
 
             if content[0:4] == "PING":
 
-                self.socket.send('PONG %s \r\n' % content.split()[1])
+                self.__send('PONG %s \r\n' % content.split()[1])
                 continue
 
             for line in content.split('\n'):
@@ -79,4 +83,4 @@ class Bot(object):
                     if match:
 
                         response = hook['function'](context, match.groups())
-                        self.socket.send("PRIVMSG %s :%s\r\n" % (context['target'], response))
+                        self.__send("PRIVMSG %s :%s\r\n" % (context['target'], response))
