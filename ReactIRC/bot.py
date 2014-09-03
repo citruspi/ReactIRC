@@ -154,9 +154,8 @@ class Bot(object):
 
                     if match:
 
-                        # Call the function with the context and result of the
-                        # match and capture the returned value
-                        response = hook['function'](match.groups())
+                        # Call the function with capture groups as parameters
+                        response = hook['function'](*match.groups())
 
                         # If the function actually returned something print it
                         # to the IRC channel
