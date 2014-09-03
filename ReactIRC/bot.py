@@ -30,7 +30,11 @@ class Bot(object):
         self.socket.connect((config['server'], config['port']))
         self.__send('NICK %s\r\n' % config['nick'])
         self.__send('USER %s %s %s :%s\r\n' % (config['nick'], config['nick'], config['nick'], config['nick']))
-        self.__send('JOIN #%s\r\n' % config['channel'])
+        self.__join(config['channel'])
+
+    def __join(self, channel):
+
+        self.__send('JOIN #%s\r\n' % channel)
 
     def monitor(self, **kwargs):
 
