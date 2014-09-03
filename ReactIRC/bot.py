@@ -40,6 +40,11 @@ class Bot(object):
 
             content = self.socket.recv(4096)
 
+            if content[0:4] == "PING":
+
+                self.socket.send('PONG %s \r\n' % content.split()[1])
+                continue
+
             for line in content.split('\n'):
 
                 line = str(line).strip()
