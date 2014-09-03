@@ -61,7 +61,7 @@ class Bot(object):
 
         self.__send('QUIT\r\n')
 
-    def on(self, rule):
+    def on(self, rule, search=False):
 
         """Execute a function when a message on IRC is matched to a regular
         expression (rule)."""
@@ -72,7 +72,8 @@ class Bot(object):
             # functions and expressions to check
             self.hooks.append({
                 'rule': re.compile(rule),
-                'function': function
+                'function': function,
+                'search': search
             })
 
             return function
@@ -150,7 +151,13 @@ class Bot(object):
                 for hook in self.hooks:
 
                     # Check if the rule matches the message body
-                    match = hook['rule'].match(self.context['message'])
+                    if hook['search']:
+
+                        match = hook['rule'].search(self.context['message'])
+
+                    else:
+
+                        match = hook['rule'].match(self.context['message'])
 
                     if match:
 
