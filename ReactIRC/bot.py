@@ -47,7 +47,7 @@ class Bot(object):
                 	  continue
 
                 context = {
-                    'sender': parsed[0],
+                    'sender': parsed[0][1:],
                     'type': parsed[1],
                     'target': parsed[2],
                     'message': parsed[3][1:]
