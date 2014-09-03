@@ -1,27 +1,9 @@
 import socket
 import re
-import pprint
 
 class Bot(object):
 
     hooks = []
-
-    def on(self, rule, **options):
-
-        def decorator(f):
-
-            self.hooks.append({
-                'rule': re.compile(rule),
-                'function': f
-            })
-
-            return f
-
-        return decorator
-
-    def __send(self, message):
-
-        self.socket.send(message)
 
     def __setup(self, config):
 
@@ -29,8 +11,12 @@ class Bot(object):
 
         self.socket.connect((config['server'], config['port']))
         self.__send('NICK %s\r\n' % config['nick'])
-        self.__send('USER %s %s %s :%s\r\n' % (config['nick'], config['nick'], config['nick'], config['nick']))
+        self.__send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' % {'n':config['nick']})
         self.__join(config['channel'])
+
+    def __send(self, message):
+
+        self.socket.send(message)
 
     def __join(self, channel):
 
@@ -39,6 +25,19 @@ class Bot(object):
     def __speak(self, target, message):
 
         self.__send("PRIVMSG %s :%s\r\n" % (target, message))
+
+    def on(self, rule):
+
+        def decorator(function):
+
+            self.hooks.append({
+                'rule': re.compile(rule),
+                'function': function
+            })
+
+            return function
+
+        return decorator
 
     def monitor(self, **kwargs):
 
