@@ -17,7 +17,10 @@ class Bot(object):
         self.socket.connect((config['server'], config['port']))
         self.__send('NICK %s\r\n' % config['nick'])
         self.__send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' % {'n':config['nick']})
-        self.__join(config['channel'])
+
+        for channel in config['channels']:
+
+            self.__join(channel)
 
     def __send(self, message):
 
@@ -52,7 +55,7 @@ class Bot(object):
         }
 
         config['nick'] = kwargs['nick']
-        config['channel'] = kwargs['channel']
+        config['channels'] = kwargs['channels'].split(',')
 
         for key in ['port', 'server']:
 
