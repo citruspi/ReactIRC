@@ -102,4 +102,7 @@ class Bot(object):
                     if match:
 
                         response = hook['function'](context, match.groups())
-                        self.__speak(context['target'], response)
+
+                        if response is not None:
+
+                            self.__speak(context['target'], response)
