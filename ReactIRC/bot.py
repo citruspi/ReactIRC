@@ -36,6 +36,10 @@ class Bot(object):
 
         self.__send('JOIN #%s\r\n' % channel)
 
+    def __speak(self, target, message):
+
+        self.__send("PRIVMSG %s :%s\r\n" % (target, message))
+
     def monitor(self, **kwargs):
 
         config = {
@@ -91,4 +95,4 @@ class Bot(object):
                     if match:
 
                         response = hook['function'](context, match.groups())
-                        self.__send("PRIVMSG %s :%s\r\n" % (context['target'], response))
+                        self.__speak(context['target'], response)
