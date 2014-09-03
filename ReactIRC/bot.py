@@ -4,23 +4,19 @@ import pprint
 
 class Bot(object):
 
-    socket = None
-    connected = False
-
-    configuration = {}
     hooks = []
 
     def on(self, rule, **options):
 
         def decorator(f):
-  
+
             self.hooks.append({
-            	  'rule': re.compile(rule),
+                'rule': re.compile(rule),
                 'function': f
             })
 
             return f
-        
+
         return decorator
 
     def configure(self, configuration):
@@ -39,17 +35,17 @@ class Bot(object):
         while True:
 
             content = self.socket.recv(4096)
-            
+
             for line in content.split('\n'):
 
                 line = str(line).strip()
 
                 parsed = line.split(None, 3)
-        
+
                 if len(parsed) != 4:
 
                 	  continue
-  
+
                 context = {
                     'sender': parsed[0],
                     'type': parsed[1],
@@ -60,7 +56,7 @@ class Bot(object):
                 for hook in self.hooks:
 
                 	  match = hook['rule'].match(context['message'])
-                	  
+
                 	  if match:
 
                 	      response = hook['function'](context, match.groups())
