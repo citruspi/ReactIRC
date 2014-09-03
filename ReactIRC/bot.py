@@ -19,18 +19,21 @@ class Bot(object):
 
         return decorator
 
-    def configure(self, configuration):
+    def monitor(self, **kwargs):
 
-        self.configuration = configuration
-
-    def monitor(self):
+        config = {
+            'username': kwargs['username'],
+            'port': kwargs['port'],
+            'server': kwargs['server'],
+            'channel': kwargs['channel']
+        }
 
         self.socket = socket.socket()
 
-        self.socket.connect((self.configuration['server'], self.configuration['port']))
-        self.socket.send('NICK %s\r\n' % self.configuration['username'])
-        self.socket.send('USER %s %s %s :%s\r\n' % (self.configuration['username'], self.configuration['username'], self.configuration['username'], self.configuration['username']))
-        self.socket.send('JOIN #%s\r\n' % self.configuration['channel'])
+        self.socket.connect((config['server'], config['port']))
+        self.socket.send('NICK %s\r\n' % config['username'])
+        self.socket.send('USER %s %s %s :%s\r\n' % (config['username'], config['username'], config['username'], config['username']))
+        self.socket.send('JOIN #%s\r\n' % config['channel'])
 
         while True:
 
@@ -53,7 +56,7 @@ class Bot(object):
                     'message': parsed[3][1:]
                 }
 
-                if context['target'] == self.configuration['username']:
+                if context['target'] == config['username']:
 
                     context['target'] = context['sender'].split('!')[0]
 
