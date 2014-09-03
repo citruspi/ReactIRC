@@ -64,6 +64,17 @@ class Bot(object):
 
         self.__send('QUIT\r\n')
 
+    def add_hook(self, rule, search, function):
+
+        """Allow for the addition of existing functions without using the
+        decorator pattern"""
+
+        self.hooks.append({
+            'rule': re.compile(rule),
+            'search': search,
+            'function': function
+        })
+
     def on(self, rule, search=False):
 
         """Execute a function when a message on IRC is matched to a regular
