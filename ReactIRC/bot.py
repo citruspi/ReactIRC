@@ -44,7 +44,7 @@ class Bot(object):
 
                 if len(parsed) != 4:
 
-                	  continue
+                    continue
 
                 context = {
                     'sender': parsed[0][1:],
@@ -53,11 +53,15 @@ class Bot(object):
                     'message': parsed[3][1:]
                 }
 
+                if context['target'] == self.configuration['username']:
+
+                    context['target'] = context['sender'].split('!')[0]
+
                 for hook in self.hooks:
 
-                	  match = hook['rule'].match(context['message'])
+                    match = hook['rule'].match(context['message'])
 
-                	  if match:
+                    if match:
 
-                	      response = hook['function'](context, match.groups())
-                	      self.socket.send("PRIVMSG %s :%s\r\n" % (context['target'], response))
+                        response = hook['function'](context, match.groups())
+                        self.socket.send("PRIVMSG %s :%s\r\n" % (context['target'], response))
