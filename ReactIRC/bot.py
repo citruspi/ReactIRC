@@ -8,6 +8,11 @@ class Bot(object):
 
     def __setup(self, config):
 
+        """Sets up the connection to the IRC server given the configuration.
+        If the port is normally used for SSL, the socket will be wrapped in
+        SSL. It then connects to the server, sets up the nick and user
+        information, and then joins any specified channels."""
+
         self.socket = socket.socket()
 
         if config['port'] in [6697, 7000, 7070]:
@@ -24,25 +29,38 @@ class Bot(object):
 
     def __send(self, message):
 
+        """Send a string on the socket."""
+
         self.socket.send(message)
 
     def speak(self, target, message):
+
+        """Send a message to user or a channel."""
 
         self.__send("PRIVMSG %s :%s\r\n" % (target, message))
 
     def join(self, channel):
 
+        """Join a channel. The channel name should be passed without the #."""
+
         self.__send('JOIN #%s\r\n' % channel)
 
     def part(self, channel):
+
+        """Leave a channel. The channel name should be passed without the #."""
 
         self.__send('PART #%s\r\n' % channel)
 
     def quit(self):
 
+        """Disconnect from the server."""
+
         self.__send('QUIT\r\n')
 
     def on(self, rule):
+
+        """Execute a function when a message on IRC is matched to a regular
+        expression (rule)."""
 
         def decorator(function):
 
@@ -56,6 +74,12 @@ class Bot(object):
         return decorator
 
     def monitor(self, **kwargs):
+
+        """Determine the configuration, setup the connection, and then listen
+        for data from the server. PONG when a PING is recieved. Otherwise
+        iterate over the functions and check if the rule matches the message.
+        If so, call the function with the context and the result of the
+        matching."""
 
         config = {
             'port': 6667,
