@@ -29,6 +29,12 @@ class Bot(object):
         config['nick'] = kwargs['nick']
         config['channel'] = kwargs['channel']
 
+        for key in ['port', 'server']:
+
+            if key in kwargs.keys():
+
+                config[key] = kwargs[key]
+
         self.socket = socket.socket()
 
         self.socket.connect((config['server'], config['port']))
