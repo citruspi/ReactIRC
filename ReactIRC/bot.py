@@ -23,6 +23,15 @@ class Bot(object):
 
         self.socket.send(message)
 
+    def __setup(self, config):
+
+        self.socket = socket.socket()
+
+        self.socket.connect((config['server'], config['port']))
+        self.__send('NICK %s\r\n' % config['nick'])
+        self.__send('USER %s %s %s :%s\r\n' % (config['nick'], config['nick'], config['nick'], config['nick']))
+        self.__send('JOIN #%s\r\n' % config['channel'])
+
     def monitor(self, **kwargs):
 
         config = {
@@ -39,12 +48,7 @@ class Bot(object):
 
                 config[key] = kwargs[key]
 
-        self.socket = socket.socket()
-
-        self.socket.connect((config['server'], config['port']))
-        self.__send('NICK %s\r\n' % config['nick'])
-        self.__send('USER %s %s %s :%s\r\n' % (config['nick'], config['nick'], config['nick'], config['nick']))
-        self.__send('JOIN #%s\r\n' % config['channel'])
+        self.__setup(config)
 
         while True:
 
