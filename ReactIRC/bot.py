@@ -5,6 +5,7 @@ import ssl
 class Bot(object):
 
     hooks = []
+    context = {}
 
     def __setup(self, config):
 
@@ -133,7 +134,7 @@ class Bot(object):
                     continue
 
                 # Parse out the sender, type, target, and message body
-                context = {
+                self.context = {
                     'sender': parsed[0][1:].split('!')[0],
                     'type': parsed[1],
                     'target': parsed[2],
@@ -141,24 +142,24 @@ class Bot(object):
                 }
 
                 # If it's a private message, set the target to the sender
-                if context['target'] == config['nick']:
+                if self.context['target'] == config['nick']:
 
-                    context['target'] = context['sender'].split('!')[0]
+                    self.context['target'] = self.context['sender']
 
                 # Iterate over the functions with an .on() decorator
                 for hook in self.hooks:
 
                     # Check if the rule matches the message body
-                    match = hook['rule'].match(context['message'])
+                    match = hook['rule'].match(self.context['message'])
 
                     if match:
 
                         # Call the function with the context and result of the
                         # match and capture the returned value
-                        response = hook['function'](context, match.groups())
+                        response = hook['function'](match.groups())
 
                         # If the function actually returned something print it
                         # to the IRC channel
                         if response is not None:
 
-                            self.speak(context['target'], response)
+                            self.speak(self.context['target'], response)
