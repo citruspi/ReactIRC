@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+
+"""
+ReactIRC.bot
+~~~~~~~~~~~~
+
+:copyright: (c) 2014 by Mihir Singh (@citruspi)
+:license: MIT, see LICENSE for more details.
+"""
+
 import socket
 import re
 import ssl
@@ -12,7 +22,8 @@ class Bot(object):
         """Sets up the connection to the IRC server given the configuration.
         If the port is normally used for SSL, the socket will be wrapped in
         SSL. It then connects to the server, sets up the nick and user
-        information, and then joins any specified channels."""
+        information, and then joins any specified channels.
+        """
 
         self.verbose = config['verbose']
         self.debug= config['debug']
@@ -67,7 +78,8 @@ class Bot(object):
     def add_hook(self, rule, function, search=False):
 
         """Allow for the addition of existing functions without using the
-        decorator pattern"""
+        decorator pattern
+        """
 
         self.hooks.append({
             'rule': re.compile(rule),
@@ -78,7 +90,8 @@ class Bot(object):
     def on(self, rule, search=False):
 
         """Execute a function when a message on IRC is matched to a regular
-        expression (rule)."""
+        expression (rule).
+        """
 
         def decorator(function):
 
@@ -100,7 +113,8 @@ class Bot(object):
         for data from the server. PONG when a PING is recieved. Otherwise
         iterate over the functions and check if the rule matches the message.
         If so, call the function with the context and the result of the
-        matching."""
+        matching.
+        """
 
         # Set defaults for the IRC port and server
         config = {
