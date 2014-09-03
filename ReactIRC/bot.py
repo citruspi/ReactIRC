@@ -1,5 +1,6 @@
 import socket
 import re
+import ssl
 
 class Bot(object):
 
@@ -8,6 +9,10 @@ class Bot(object):
     def __setup(self, config):
 
         self.socket = socket.socket()
+
+        if config['port'] in [6697, 7000, 7070]:
+
+            self.socket = ssl.wrap_socket(self.socket)
 
         self.socket.connect((config['server'], config['port']))
         self.__send('NICK %s\r\n' % config['nick'])
