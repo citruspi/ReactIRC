@@ -146,7 +146,13 @@ class Bot(object):
 
         # Listen for data forever
 
-        self.__monitor_irc()
+        irc_thread = threading.Thread(target=self.__monitor_irc, args=())
+        irc_thread.daemon = True
+        irc_thread.start()
+
+        while True:
+
+            pass
 
     def __monitor_irc(self):
 
