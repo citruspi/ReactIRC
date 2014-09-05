@@ -11,19 +11,23 @@ ReactIRC.bot
 import socket
 import re
 import ssl
+import threading
 
 class Bot(object):
 
     hooks = []
     context = {}
+    config = {}
 
-    def __setup(self, config):
+    def __setup(self):
 
         """Sets up the connection to the IRC server given the configuration.
         If the port is normally used for SSL, the socket will be wrapped in
         SSL. It then connects to the server, sets up the nick and user
         information, and then joins any specified channels.
         """
+
+        config = self.config
 
         self.verbose = config['verbose']
         self.debug= config['debug']
@@ -135,10 +139,17 @@ class Bot(object):
 
                 config[key] = kwargs[key]
 
+        self.config = config
+
         # Setup the connection
-        self.__setup(config)
+        self.__setup()
 
         # Listen for data forever
+
+        self.__monitor_irc()
+
+    def __monitor_irc(self):
+
         while True:
 
             # Read in some data
@@ -177,7 +188,7 @@ class Bot(object):
                 }
 
                 # If it's a private message, set the target to the sender
-                if self.context['target'] == config['nick']:
+                if self.context['target'] == self.config['nick']:
 
                     self.context['target'] = self.context['sender']
 
