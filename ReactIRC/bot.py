@@ -15,11 +15,11 @@ import threading
 
 class Bot(object):
 
-    hooks = []
-    context = {}
-    config = {}
+    __irc_hooks = []
+    __irc_context = {}
+    __irc_config = {}
 
-    def __setup(self):
+    def __setup_irc(self):
 
         """Sets up the connection to the IRC server given the configuration.
         If the port is normally used for SSL, the socket will be wrapped in
@@ -27,7 +27,7 @@ class Bot(object):
         information, and then joins any specified channels.
         """
 
-        config = self.config
+        config = self.__irc_config
 
         self.verbose = config['verbose']
         self.debug= config['debug']
@@ -85,7 +85,7 @@ class Bot(object):
         decorator pattern
         """
 
-        self.hooks.append({
+        self.__irc_hooks.append({
             'rule': re.compile(rule),
             'search': search,
             'function': function
@@ -101,7 +101,7 @@ class Bot(object):
 
             # Add the function and the regular expression to the list of
             # functions and expressions to check
-            self.hooks.append({
+            self.__irc_hooks.append({
                 'rule': re.compile(rule),
                 'function': function,
                 'search': search
@@ -139,10 +139,10 @@ class Bot(object):
 
                 config[key] = kwargs[key]
 
-        self.config = config
+        self.__irc_config = config
 
         # Setup the connection
-        self.__setup()
+        self.__setup_irc()
 
         # Listen for data forever
 
@@ -155,6 +155,8 @@ class Bot(object):
             pass
 
     def __monitor_irc(self):
+
+        config = self.__irc_config
 
         while True:
 
@@ -194,12 +196,12 @@ class Bot(object):
                 }
 
                 # If it's a private message, set the target to the sender
-                if self.context['target'] == self.config['nick']:
+                if self.context['target'] == config['nick']:
 
                     self.context['target'] = self.context['sender']
 
                 # Iterate over the functions with an .on() decorator
-                for hook in self.hooks:
+                for hook in self.__irc_hooks:
 
                     # Check if the rule matches the message body
                     if hook['search']:
