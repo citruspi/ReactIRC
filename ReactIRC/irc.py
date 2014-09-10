@@ -1,11 +1,11 @@
 import re
 import threading
+from . import conf
 
 class IRC (object):
 
     connection = None
     bot = None
-    config = None
 
     __hooks = []
 
@@ -36,8 +36,6 @@ class IRC (object):
 
     def __listen(self):
 
-        config = self.config
-
         while True:
 
             # Read in some data
@@ -56,7 +54,7 @@ class IRC (object):
                 # Strip any unnecessary characters off the ends
                 line = str(line).strip()
 
-                if self.bot.verbose:
+                if conf['verbose']:
 
                     print line
 
@@ -78,7 +76,7 @@ class IRC (object):
                 self.bot.context = self.context
 
                 # If it's a private message, set the target to the sender
-                if self.context['target'] == config['nick']:
+                if self.context['target'] == conf['nick']:
 
                     self.context['target'] = self.context['sender']
 
@@ -96,7 +94,7 @@ class IRC (object):
 
                     if match:
 
-                        if self.bot.debug:
+                        if conf['debug']:
 
                             print '---'
                             print self.context

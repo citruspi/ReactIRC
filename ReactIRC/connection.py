@@ -1,5 +1,6 @@
 import socket
 import ssl
+from . import conf
 
 class Connection (object):
 
@@ -7,17 +8,17 @@ class Connection (object):
 
     ssl_ports = [6697, 7000, 7070]
 
-    def __init__ (self, host, port):
+    def __init__ (self):
 
         self.connection = socket.socket()
 
         # If the port is used for SSL, wrap the socket in SSL/TLS
-        if port in self.ssl_ports:
+        if conf['port'] in self.ssl_ports:
 
             self.connection = ssl.wrap_socket(self.connection)
 
         # Initiate a connection to the server
-        self.connection.connect((host, port))
+        self.connection.connect((conf['server'], conf['port']))
 
     def send (self, string):
 

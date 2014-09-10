@@ -11,6 +11,7 @@ ReactIRC.bot
 from web import Web
 from connection import Connection
 from irc import IRC
+from . import conf
 
 class Bot(object):
 
@@ -18,12 +19,12 @@ class Bot(object):
     __irc = None
     __connection = None
 
-    __irc_config = {}
-
     context = {}
     request = None
 
     def __init__(self):
+
+        self.config = conf
 
         self.__web = Web(self)
         self.web = self.__web.add
@@ -39,22 +40,16 @@ class Bot(object):
         information, and then joins any specified channels.
         """
 
-        config = self.__irc_config
+        self.__connection = Connection()
 
-        self.verbose = config['verbose']
-        self.debug= config['debug']
-
-        self.__connection = Connection(config['server'], config['port'])
-
-
-        self.__connection.send('NICK %s\r\n' % config['nick'])
+        self.__connection.send('NICK %s\r\n' % conf['nick'])
         self.__connection.send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' %
                                 {
-                                    'n':config['nick']
+                                    'n':conf['nick']
                                 })
 
         # Join each of the specified channels
-        for channel in config['channels']:
+        for channel in conf['channels']:
 
             self.join(channel)
 
@@ -106,7 +101,7 @@ class Bot(object):
         # Set defaults for the IRC port and server
         config = {
             'port': 6667,
-            'server': 'chat.freenode.com',\
+            'server': 'chat.freenode.com',
             'debug': False,
             'verbose': False
         }
@@ -122,14 +117,15 @@ class Bot(object):
 
                 config[key] = kwargs[key]
 
-        self.__irc_config = config
+        for key in config.keys():
+
+            conf[key] = config[key]
 
         # Setup the connection
         self.__setup_irc()
 
         # Listen for data forever
 
-        self.__irc.config = config
         self.__irc.connection = self.__connection
 
         self.__irc.monitor()

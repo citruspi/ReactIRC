@@ -28,4 +28,8 @@ __author__ = 'Mihir Singh (@citruspi)'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2014 Mihir Singh (@citruspi)'
 
+from config import Config
+
+conf = Config()
+
 from bot import Bot
