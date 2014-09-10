@@ -36,4 +36,6 @@ from network import Connection
 
 connection = Connection()
 
+context = {}
+
 from bot import Bot

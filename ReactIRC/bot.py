@@ -17,22 +17,19 @@ class Bot(object):
     __web = None
     __irc = None
 
-    context = {}
-    request = None
-
     def __init__(self):
 
         self.config = conf
 
-        self.__web = Web(self)
-        self.web = self.__web.add
-
-        self.__irc = IRC(self)
+        self.__irc = IRC()
         self.on = self.__irc.add
         self.speak = self.__irc.speak
         self.join = self.__irc.join
         self.part = self.__irc.part
         self.quit = self.__irc.quit
+
+        self.__web = Web(self.__irc)
+        self.web = self.__web.add
 
     def add_hook(self, rule, function, search=False):
 

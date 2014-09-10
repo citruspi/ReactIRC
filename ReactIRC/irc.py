@@ -1,16 +1,10 @@
 import re
 import threading
-from . import conf, connection
+from . import conf, connection, context
 
 class IRC (object):
 
-    bot = None
-
     __hooks = []
-
-    def __init__ (self, bot):
-
-        self.bot = bot
 
     def add(self, rule, search=False):
 
@@ -88,19 +82,17 @@ class IRC (object):
                     continue
 
                 # Parse out the sender, type, target, and message body
-                self.context = {
+                context = {
                     'sender': parsed[0][1:].split('!')[0],
                     'type': parsed[1],
                     'target': parsed[2],
                     'message': parsed[3][1:]
                 }
 
-                self.bot.context = self.context
-
                 # If it's a private message, set the target to the sender
-                if self.context['target'] == conf['nick']:
+                if context['target'] == conf['nick']:
 
-                    self.context['target'] = self.context['sender']
+                    context['target'] = context['sender']
 
                 # Iterate over the functions with an .on() decorator
                 for hook in self.__hooks:
@@ -108,18 +100,18 @@ class IRC (object):
                     # Check if the rule matches the message body
                     if hook['search']:
 
-                        match = hook['rule'].search(self.context['message'])
+                        match = hook['rule'].search(context['message'])
 
                     else:
 
-                        match = hook['rule'].match(self.context['message'])
+                        match = hook['rule'].match(context['message'])
 
                     if match:
 
                         if conf['debug']:
 
                             print '---'
-                            print self.context
+                            print context
                             print match.groups()
 
                         # Call the function with capture groups as parameters
@@ -129,7 +121,7 @@ class IRC (object):
                         # to the IRC channel
                         if response is not None:
 
-                            self.speak(self.context['target'], response)
+                            self.speak(context['target'], response)
 
     def monitor (self):
 
