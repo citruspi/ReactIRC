@@ -1,4 +1,5 @@
 import re
+import threading
 from wsgiref.simple_server import make_server
 from . import conf, context
 
@@ -74,7 +75,13 @@ class Web(object):
 
         return decorator
 
-    def monitor (self):
+    def __start_web (self):
 
         server = make_server(conf['web_host'], conf['web_port'], self.__listen)
         server.serve_forever()
+
+    def monitor (self):
+
+        thread = threading.Thread(target=self.__start_web, args=())
+        thread.daemon = True
+        thread.start()

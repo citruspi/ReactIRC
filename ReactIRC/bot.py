@@ -66,4 +66,4 @@ class Bot(object):
 
         while True:
 
-            pass
+            print 'yellow'
