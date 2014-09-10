@@ -33,15 +33,15 @@ class IRC (object):
 
     def join(self, channel):
 
-        """Join a channel. The channel name should be passed without the #."""
+        """Join a channel."""
 
-        connection.send('JOIN #%s\r\n' % channel)
+        connection.send('JOIN %s\r\n' % channel)
 
     def part(self, channel):
 
-        """Leave a channel. The channel name should be passed without the #."""
+        """Leave a channel."""
 
-        connection.send('PART #%s\r\n' % channel)
+        connection.send('PART %s\r\n' % channel)
 
     def quit(self):
 
@@ -96,7 +96,7 @@ class IRC (object):
                 # Iterate over the functions with an .on() decorator
                 for hook in self.__hooks:
 
-                    match = hook['rule'].search(context['message'])                    
+                    match = hook['rule'].search(context['message'])
 
                     if match:
 
