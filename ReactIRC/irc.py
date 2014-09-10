@@ -109,6 +109,17 @@ class IRC (object):
 
     def monitor (self):
 
+        connection.send('NICK %s\r\n' % conf['nick'])
+        connection.send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' %
+                                {
+                                    'n':conf['nick']
+                                })
+
+        # Join each of the specified channels
+        for channel in conf['channels']:
+
+            self.bot.join(channel)
+
         irc_thread = threading.Thread(target=self.__listen, args=())
         irc_thread.daemon = True
         irc_thread.start()
