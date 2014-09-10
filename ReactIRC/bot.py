@@ -29,30 +29,10 @@ class Bot(object):
 
         self.__irc = IRC(self)
         self.on = self.__irc.add
-
-    def speak(self, target, message):
-
-        """Send a message to user or a channel."""
-
-        connection.send("PRIVMSG %s :%s\r\n" % (target, message))
-
-    def join(self, channel):
-
-        """Join a channel. The channel name should be passed without the #."""
-
-        connection.send('JOIN #%s\r\n' % channel)
-
-    def part(self, channel):
-
-        """Leave a channel. The channel name should be passed without the #."""
-
-        connection.send('PART #%s\r\n' % channel)
-
-    def quit(self):
-
-        """Disconnect from the server."""
-
-        connection.send('QUIT\r\n')
+        self.speak = self.__irc.speak
+        self.join = self.__irc.join
+        self.part = self.__irc.part
+        self.quit = self.__irc.quit
 
     def add_hook(self, rule, function, search=False):
 

@@ -32,6 +32,30 @@ class IRC (object):
 
         return decorator
 
+    def speak(self, target, message):
+
+        """Send a message to user or a channel."""
+
+        connection.send("PRIVMSG %s :%s\r\n" % (target, message))
+
+    def join(self, channel):
+
+        """Join a channel. The channel name should be passed without the #."""
+
+        connection.send('JOIN #%s\r\n' % channel)
+
+    def part(self, channel):
+
+        """Leave a channel. The channel name should be passed without the #."""
+
+        connection.send('PART #%s\r\n' % channel)
+
+    def quit(self):
+
+        """Disconnect from the server."""
+
+        connection.send('QUIT\r\n')
+
     def __listen(self):
 
         while True:
@@ -105,7 +129,7 @@ class IRC (object):
                         # to the IRC channel
                         if response is not None:
 
-                            self.bot.speak(self.context['target'], response)
+                            self.speak(self.context['target'], response)
 
     def monitor (self):
 
@@ -118,7 +142,7 @@ class IRC (object):
         # Join each of the specified channels
         for channel in conf['channels']:
 
-            self.bot.join(channel)
+            self.join(channel)
 
         irc_thread = threading.Thread(target=self.__listen, args=())
         irc_thread.daemon = True
