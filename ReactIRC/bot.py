@@ -12,16 +12,22 @@ import socket
 import re
 import ssl
 import threading
+from web import Web
 
 class Bot(object):
+
+    __web = None
 
     __irc_hooks = []
     __irc_config = {}
 
-    __web_hooks = []
-
     context = {}
     request = None
+
+    def __init__(self):
+
+        self.__web = Web(self)
+        self.web = self.__web.add
 
     def __setup_irc(self):
 
@@ -115,18 +121,7 @@ class Bot(object):
 
         return decorator
 
-    def web(self, rule):
 
-        def decorator(function):
-
-            self.__web_hooks.append({
-                'rule': re.compile(rule),
-                'function': function
-            })
-
-            return function
-
-        return decorator
 
     def monitor(self, **kwargs):
 
@@ -167,63 +162,11 @@ class Bot(object):
         irc_thread.daemon = True
         irc_thread.start()
 
-        from wsgiref.simple_server import make_server
-        srv = make_server('0.0.0.0', 8080, self.__monitor_web)
-        srv.serve_forever()
+        self.__web.monitor()
 
         while True:
 
             pass
-
-    def __web_not_found(self, environ, start_response):
-
-        start_response('404 NOT FOUND', [('Content-Type', 'text/plain')])
-        return ['Route Not Defined.']
-
-    def __web_success(self, environ, start_response):
-
-        start_response('200 OK', [('Content-Type', 'text/html')])
-        return ['']
-
-    def __monitor_web(self, environ, start_response):
-
-        matched = False
-
-        for hook in self.__web_hooks:
-
-            match = hook['rule'].search(environ.get('PATH_INFO', ''))
-
-            if match:
-
-                matched = True
-
-                try:
-                    body_size = int(environ.get('CONTENT_LENGTH', 0))
-                except (ValueError):
-                    body_size = 0
-
-                environ['wsgi.input'] = environ['wsgi.input'].read(body_size)
-
-                self.request = environ
-                response = hook['function'](*match.groups())
-
-                if response is not None:
-
-                    if 'targets' not in response.keys():
-
-                        pass
-
-                    else:
-
-                        for target in response['targets']:
-
-                            self.speak(target, response['message'])
-
-                return self.__web_success(environ, start_response)
-
-        if not matched:
-
-            return self.__web_not_found(environ, start_response)
 
     def __monitor_irc(self):
 
