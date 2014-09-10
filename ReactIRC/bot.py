@@ -8,15 +8,16 @@ ReactIRC.bot
 :license: MIT, see LICENSE for more details.
 """
 
-import socket
 import re
 import ssl
 import threading
 from web import Web
+from connection import Connection
 
 class Bot(object):
 
     __web = None
+    __connection = None
 
     __irc_hooks = []
     __irc_config = {}
@@ -42,52 +43,43 @@ class Bot(object):
         self.verbose = config['verbose']
         self.debug= config['debug']
 
-        self.socket = socket.socket()
+        self.__connection = Connection(config['server'], config['port'])
 
-        # If the port is used for SSL, wrap the socket in SSL/TLS
-        if config['port'] in [6697, 7000, 7070]:
 
-            self.socket = ssl.wrap_socket(self.socket)
-
-        # Initiate a connection to the server and setup the user/nick
-        self.socket.connect((config['server'], config['port']))
-        self.__send('NICK %s\r\n' % config['nick'])
-        self.__send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' % {'n':config['nick']})
+        self.__connection.send('NICK %s\r\n' % config['nick'])
+        self.__connection.send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' %
+                                {
+                                    'n':config['nick']
+                                })
 
         # Join each of the specified channels
         for channel in config['channels']:
 
             self.join(channel)
 
-    def __send(self, message):
-
-        """Send a string on the socket."""
-
-        self.socket.send(message)
-
     def speak(self, target, message):
 
         """Send a message to user or a channel."""
 
-        self.__send("PRIVMSG %s :%s\r\n" % (target, message))
+        self.__connection.send("PRIVMSG %s :%s\r\n" % (target, message))
 
     def join(self, channel):
 
         """Join a channel. The channel name should be passed without the #."""
 
-        self.__send('JOIN #%s\r\n' % channel)
+        self.__connection.send('JOIN #%s\r\n' % channel)
 
     def part(self, channel):
 
         """Leave a channel. The channel name should be passed without the #."""
 
-        self.__send('PART #%s\r\n' % channel)
+        self.__connection.send('PART #%s\r\n' % channel)
 
     def quit(self):
 
         """Disconnect from the server."""
 
-        self.__send('QUIT\r\n')
+        self.__connection.send('QUIT\r\n')
 
     def add_hook(self, rule, function, search=False):
 
@@ -175,7 +167,7 @@ class Bot(object):
         while True:
 
             # Read in some data
-            content = self.socket.recv(4096)
+            content = self.__connection.receive(4096)
 
             # If it's a timeout PING...
             if content[0:4] == "PING":
