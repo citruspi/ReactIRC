@@ -16,7 +16,6 @@ class Bot(object):
 
     __web = None
     __irc = None
-    __connection = None
 
     context = {}
     request = None
@@ -30,16 +29,6 @@ class Bot(object):
 
         self.__irc = IRC(self)
         self.on = self.__irc.add
-
-    def __setup_irc(self):
-
-        """Sets up the connection to the IRC server given the configuration.
-        If the port is normally used for SSL, the socket will be wrapped in
-        SSL. It then connects to the server, sets up the nick and user
-        information, and then joins any specified channels.
-        """
-
-        connection.connect()
 
     def speak(self, target, message):
 
@@ -109,10 +98,7 @@ class Bot(object):
 
             conf[key] = config[key]
 
-        # Setup the connection
-        self.__setup_irc()
-
-        # Listen for data forever
+        connection.connect()
 
         self.__irc.monitor()
         self.__web.monitor()
