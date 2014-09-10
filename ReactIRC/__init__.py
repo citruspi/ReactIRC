@@ -32,4 +32,8 @@ from config import Config
 
 conf = Config()
 
+from network import Connection
+
+connection = Connection()
+
 from bot import Bot

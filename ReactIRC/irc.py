@@ -1,18 +1,16 @@
 import re
 import threading
-from . import conf
+from . import conf, connection
 
 class IRC (object):
 
-    connection = None
     bot = None
 
     __hooks = []
 
-    def __init__ (self, bot, connection):
+    def __init__ (self, bot):
 
         self.bot = bot
-        self.connection = connection
 
     def add(self, rule, search=False):
 
@@ -39,13 +37,13 @@ class IRC (object):
         while True:
 
             # Read in some data
-            content = self.connection.receive(4096)
+            content = connection.receive(4096)
 
             # If it's a timeout PING...
             if content[0:4] == "PING":
 
                 #... respond with a PONG
-                self.connection.send('PONG %s \r\n' % content.split()[1])
+                connection.send('PONG %s \r\n' % content.split()[1])
                 continue
 
             # Otherwise, break up the data by line

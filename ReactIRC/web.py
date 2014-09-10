@@ -4,11 +4,11 @@ from wsgiref.simple_server import make_server
 class Web(object):
 
     __hooks = []
-    __connection = None
+    __bot = None
 
-    def __init__ (self, connection):
+    def __init__ (self, bot):
 
-        self.__connection = connection
+        self.__bot = bot
 
     def __404 (self, environ, start_response):
 
@@ -39,7 +39,7 @@ class Web(object):
 
                 environ['wsgi.input'] = environ['wsgi.input'].read(body_size)
 
-                self.__connection.request = environ
+                self.__bot.request = environ
                 response = hook['function'](*match.groups())
 
                 if response is not None:
@@ -52,7 +52,7 @@ class Web(object):
 
                         for target in response['targets']:
 
-                            self.__connection.speak(target, response['message'])
+                            self.__bot.speak(target, response['message'])
 
                 return self.__200(environ, start_response)
 

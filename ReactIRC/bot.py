@@ -9,9 +9,8 @@ ReactIRC.bot
 """
 
 from web import Web
-from connection import Connection
 from irc import IRC
-from . import conf
+from . import conf, connection
 
 class Bot(object):
 
@@ -29,7 +28,7 @@ class Bot(object):
         self.__web = Web(self)
         self.web = self.__web.add
 
-        self.__irc = IRC(self, self.__connection)
+        self.__irc = IRC(self)
         self.on = self.__irc.add
 
     def __setup_irc(self):
@@ -40,10 +39,10 @@ class Bot(object):
         information, and then joins any specified channels.
         """
 
-        self.__connection = Connection()
+        connection.connect()
 
-        self.__connection.send('NICK %s\r\n' % conf['nick'])
-        self.__connection.send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' %
+        connection.send('NICK %s\r\n' % conf['nick'])
+        connection.send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' %
                                 {
                                     'n':conf['nick']
                                 })
@@ -57,25 +56,25 @@ class Bot(object):
 
         """Send a message to user or a channel."""
 
-        self.__connection.send("PRIVMSG %s :%s\r\n" % (target, message))
+        connection.send("PRIVMSG %s :%s\r\n" % (target, message))
 
     def join(self, channel):
 
         """Join a channel. The channel name should be passed without the #."""
 
-        self.__connection.send('JOIN #%s\r\n' % channel)
+        connection.send('JOIN #%s\r\n' % channel)
 
     def part(self, channel):
 
         """Leave a channel. The channel name should be passed without the #."""
 
-        self.__connection.send('PART #%s\r\n' % channel)
+        connection.send('PART #%s\r\n' % channel)
 
     def quit(self):
 
         """Disconnect from the server."""
 
-        self.__connection.send('QUIT\r\n')
+        connection.send('QUIT\r\n')
 
     def add_hook(self, rule, function, search=False):
 
@@ -125,8 +124,6 @@ class Bot(object):
         self.__setup_irc()
 
         # Listen for data forever
-
-        self.__irc.connection = self.__connection
 
         self.__irc.monitor()
         self.__web.monitor()

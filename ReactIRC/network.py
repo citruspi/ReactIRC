@@ -12,6 +12,8 @@ class Connection (object):
 
         self.connection = socket.socket()
 
+    def connect(self):
+
         # If the port is used for SSL, wrap the socket in SSL/TLS
         if conf['port'] in self.ssl_ports:
 
