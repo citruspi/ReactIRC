@@ -6,7 +6,7 @@ class IRC (object):
 
     __hooks = []
 
-    def add(self, rule, search=False):
+    def add(self, rule):
 
         """Execute a function when a message on IRC is matched to a regular
         expression (rule).
@@ -19,7 +19,6 @@ class IRC (object):
             self.__hooks.append({
                 'rule': re.compile(rule),
                 'function': function,
-                'search': search
             })
 
             return function
@@ -97,14 +96,7 @@ class IRC (object):
                 # Iterate over the functions with an .on() decorator
                 for hook in self.__hooks:
 
-                    # Check if the rule matches the message body
-                    if hook['search']:
-
-                        match = hook['rule'].search(context['message'])
-
-                    else:
-
-                        match = hook['rule'].match(context['message'])
+                    match = hook['rule'].search(context['message'])                    
 
                     if match:
 
