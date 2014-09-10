@@ -52,13 +52,7 @@ class Bot(object):
         matching.
         """
 
-        # Set defaults for the IRC port and server
-        config = {
-            'port': 6667,
-            'server': 'chat.freenode.com',
-            'debug': False,
-            'verbose': False
-        }
+        config = {}
 
         # Set the nick and channels
         config['nick'] = kwargs['nick']

@@ -1,5 +1,12 @@
 class Config(dict):
 
+    def __init__ (self):
+
+        self['server'] = 'chat.freenode.com'
+        self['port'] = 6667
+        self['debug'] = False
+        self['verbose'] = False
+
     def __getattr__(self, attr):
 
         try:
