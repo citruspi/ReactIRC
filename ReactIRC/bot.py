@@ -11,6 +11,7 @@ ReactIRC.bot
 from web import Web
 from irc import IRC
 from . import conf, connection
+import pprint
 
 class Bot(object):
 
@@ -52,22 +53,13 @@ class Bot(object):
         matching.
         """
 
-        config = {}
-
-        # Set the nick and channels
-        config['nick'] = kwargs['nick']
-        config['channels'] = kwargs['channels'].split(',')
-
-        # Determine if the port or server was overridden
-        for key in ['port', 'server', 'debug', 'verbose']:
+        for key in ['port', 'server', 'debug', 'verbose', 'nick', 'channels']:
 
             if key in kwargs.keys():
 
-                config[key] = kwargs[key]
+                conf[key] = kwargs[key]
 
-        for key in config.keys():
-
-            conf[key] = config[key]
+        conf['channels'] = conf['channels'].split(',')
 
         connection.connect()
 
