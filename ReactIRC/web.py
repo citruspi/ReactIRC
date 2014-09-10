@@ -1,6 +1,6 @@
 import re
 from wsgiref.simple_server import make_server
-from . import context
+from . import conf, context
 
 class Web(object):
 
@@ -76,5 +76,5 @@ class Web(object):
 
     def monitor (self):
 
-        server = make_server('0.0.0.0', 8080, self.__listen)
+        server = make_server(conf['web_host'], conf['web_port'], self.__listen)
         server.serve_forever()

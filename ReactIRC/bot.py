@@ -53,9 +53,7 @@ class Bot(object):
         matching.
         """
 
-        for key in ['port', 'server', 'debug', 'verbose', 'nick', 'channels']:
-
-            if key in kwargs.keys():
+        for key in kwargs.keys():
 
                 conf[key] = kwargs[key]
 

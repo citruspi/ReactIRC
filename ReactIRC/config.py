@@ -6,6 +6,8 @@ class Config(dict):
         self['port'] = 6667
         self['debug'] = False
         self['verbose'] = False
+        self['web_host'] = '0.0.0.0'
+        self['web_port'] = 8080
 
     def __getattr__(self, attr):
 
