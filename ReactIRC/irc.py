@@ -118,10 +118,9 @@ class IRC (object):
     def monitor (self):
 
         connection.send('NICK %s\r\n' % conf['nick'])
-        connection.send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' %
-                                {
-                                    'n':conf['nick']
-                                })
+
+        nick = {'n': conf['nick']}
+        connection.send('USER %(n)s %(n)s %(n)s :%(n)s\r\n' % nick)
 
         # Join each of the specified channels
         for channel in conf['channels']:
