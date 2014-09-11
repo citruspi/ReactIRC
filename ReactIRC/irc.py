@@ -4,7 +4,7 @@ from . import conf, connection, context
 
 class IRC (object):
 
-    __hooks = []
+    hooks = []
 
     def add(self, rule):
 
@@ -16,7 +16,7 @@ class IRC (object):
 
             # Add the function and the regular expression to the list of
             # functions and expressions to check
-            self.__hooks.append({
+            self.hooks.append({
                 'rule': re.compile(rule),
                 'function': function,
             })
@@ -94,7 +94,7 @@ class IRC (object):
                     context['target'] = context['sender']
 
                 # Iterate over the functions with an .on() decorator
-                for hook in self.__hooks:
+                for hook in self.hooks:
 
                     match = hook['rule'].search(context['message'])
 

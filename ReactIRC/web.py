@@ -5,7 +5,7 @@ from . import conf, context
 
 class Web(object):
 
-    __hooks = []
+    hooks = []
     __irc = None
 
     def __init__ (self, irc):
@@ -26,7 +26,7 @@ class Web(object):
 
         matched = False
 
-        for hook in self.__hooks:
+        for hook in self.hooks:
 
             match = hook['rule'].search(environ.get('PATH_INFO', ''))
 
@@ -66,7 +66,7 @@ class Web(object):
 
         def decorator(function):
 
-            self.__hooks.append({
+            self.hooks.append({
                 'rule': re.compile(rule),
                 'function': function
             })

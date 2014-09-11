@@ -31,17 +31,25 @@ class Bot(object):
         self.__web = Web(self.__irc)
         self.web = self.__web.add
 
-    def add_hook(self, rule, function, search=False):
+    def hook(self, source, rule, function):
 
         """Allow for the addition of existing functions without using the
         decorator pattern
         """
 
-        self.__irc_hooks.append({
-            'rule': re.compile(rule),
-            'search': search,
-            'function': function
-        })
+        if source == 'irc':
+
+            self.__irc.hooks.append({
+                'rule': re.compile(rule),
+                'function': function
+            })
+
+        elif source == 'web':
+
+            self.__web.hooks.append({
+                'rule': re.compile(rule),
+                'function': function
+            })
 
     def monitor(self, **kwargs):
 
