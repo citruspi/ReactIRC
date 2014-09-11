@@ -11,7 +11,6 @@ ReactIRC.bot
 from web import Web
 from irc import IRC
 from . import conf, connection
-import pprint
 
 class Bot(object):
 
@@ -66,4 +65,4 @@ class Bot(object):
 
         while True:
 
-            print 'yellow'
+            pass
